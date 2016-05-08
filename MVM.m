@@ -1,23 +1,13 @@
 clear global;
-<<<<<<< HEAD
-global vertice;
 
-
-icosahedron();
-
-%% Uniform resampling
-datapath = './data/data04/';
-=======
 addpath(genpath('./lib/'));
 addpath(genpath('./util/'));
 
 vertice = icosahedron(4);
 vertice = vertice(vertice(:,3)>=0,:);
 
-% fclose(fileID);
 %% Uniform resampling
-datapath = '../data/data02/';
->>>>>>> 2b7efc3b742c2d428ca87e21aa31f800e1888b3d
+datapath = '../data/data04/';
 lightvec = load([datapath 'lightvec.txt']);
 [IDX,~]=knnsearch(vertice,lightvec);
 [new_vertice,~,reverse_idx] = unique(IDX);
@@ -33,17 +23,11 @@ weight = zeros(num_direction,1);
 
 for i=1:num_images
     file=fullfile(datapath, image_files(i).name);
-<<<<<<< HEAD
-    Img = imread(file);
-    normal_images(reverse_idx(i),:,:,:) = normal_images(reverse_idx(i),:,:,:) + double([0 (lightvec(i,:)*vertice(IDX(i),:)')*Img]);
-    weight(reverse_idx(i)) = weight(reverse_idx(i)) + dot(lightvec(i),vertice(IDX(i)));
-=======
     tic_toc_print('Interpolate images %d / %d\n', i, num_images);
     Img = double(imread(file));
     i_w = lightvec(i,:)*vertice(IDX(i),:)';
     normal_images(:,:,:,reverse_idx(i)) = normal_images(:,:,:,reverse_idx(i)) + Img*i_w;
     weight(reverse_idx(i)) = weight(reverse_idx(i)) + i_w;
->>>>>>> 2b7efc3b742c2d428ca87e21aa31f800e1888b3d
 end
 
 for i=1:num_direction
@@ -51,28 +35,16 @@ for i=1:num_direction
 end
 lightvec = vertice(new_vertice,:);
 %% Choose Denominator
-<<<<<<< HEAD
-
-for i=1:num_direction
-    grey_images(i,:,:) = rgb2grey(normal_images(i,:,:,:));
-=======
 grey_images=double(zeros(size(I,1),size(I,2),num_direction));
 for i=1:num_direction
 %     grey_images(i,:,:) = rgb2gray(squeeze(normal_images(:,:,:,i))/255);
   grey_images(:,:,i) = 0.2989 * normal_images(:,:,1,i) + ...
     0.5870 * normal_images(:,:,2,i) + 0.1140 * normal_images(:,:,3,i);
 
->>>>>>> 2b7efc3b742c2d428ca87e21aa31f800e1888b3d
 end
 pix_Rank = zeros(size(grey_images));
 AA = zeros(num_direction,1);
 
-<<<<<<< HEAD
-
-
-
-
-=======
 for i=1:size(I,1)
     for j=1:size(I,2)
         pixel=squeeze(grey_images(i,j,:));
@@ -118,13 +90,11 @@ for i=1:size(I,1)
         fprintf(fileID,'%.3f %.3f %.3f\n',init_norm(i,j,:));
     end
 end
->>>>>>> 2b7efc3b742c2d428ca87e21aa31f800e1888b3d
 
 fclose(fileID);
 figure, imshow(init_norm);
 
 %% Refine
-% opt_matrix = graphcut_refine(init_norm);
 
 sigma = 0.6;
 lambda = 0.5;
@@ -138,8 +108,7 @@ vertice = vertice(new_vertice, :);
 
 E_data = pdist2(vertice, norm_vec);
 E_smoothness = lambda * log(1 + pdist2(vertice, vertice) / (2 * sigma * sigma));
-%convert data type in energy as integer by divide smallest non-zero number
- % ???
+
 E_data = int32(E_data * 10000);
 E_smoothness = int32(E_smoothness * 10000);
 
@@ -149,7 +118,7 @@ Si=zeros(edge_num,1);
 Sj=zeros(edge_num,1);
 Sv=ones(edge_num,1);
 cnt = 0;
-%vertical
+
 for i=1:size(I,1)-1
     for j=1:size(I,2)
         cnt=cnt+1;
@@ -157,7 +126,7 @@ for i=1:size(I,1)-1
         Sj(cnt)=i*size(I,2)+j;
     end
 end
-%horizontal
+
 for i=1:size(I,1)
     for j=1:size(I,2)-1
         cnt=cnt+1;
@@ -198,8 +167,6 @@ figure, imshow((-1/sqrt(3) * normsOPT(:,:,1) + 1/sqrt(3) * normsOPT(:,:,2) + 1/s
 
 
 %% reconstruct
-
-opt_norm = init_norm;
 
 map_height = size(opt_norm, 1);
 map_width = size(opt_norm, 2);
