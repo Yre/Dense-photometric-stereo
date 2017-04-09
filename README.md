@@ -1,5 +1,7 @@
 # Multiple-View-Modeling
 
+Implement this paper: http://ieeexplore.ieee.org/document/1467260/
+
 ## Steps
 1. Estimation of light direction. 
 Seek the nearest light direction on an icosahedron of 1313 angles, then interpolate the image.
@@ -17,4 +19,5 @@ Define energy function for graph cut minimization: E(f) = E_data(f) + E_smoothne
 `E_smoothness` describes the smoothness between each pixel and its neighborhood.
 
 Here we use GCoptimization for the further optimization given the parameters.
+
 
